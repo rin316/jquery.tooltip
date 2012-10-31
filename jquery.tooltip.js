@@ -108,7 +108,7 @@ Tooltip.prototype = {
 
 		self.$tooltip.empty();
 		$.each(self.dataObj, function(prop, value){
-			//ハンドラーを除外
+			//自分自身を除外
 			if (this !== self){
 				self.$tooltip.append('<div class="' + prop + '">' + value + '</div>');
 			}
