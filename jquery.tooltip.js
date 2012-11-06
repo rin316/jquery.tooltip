@@ -69,8 +69,7 @@ Tooltip.prototype = {
 			'mouseenter':function(){
 				self.createElement();
 				self.setClass();
-				(self.o.referenceData === 'title')
-					? self.setTitle('remove') : null;
+				self.setTitle('remove');
 				self.setContents();
 				//contents生成後にtooltipのsizeを取得
 				self.tooltipW = self.$tooltip.outerWidth();
@@ -79,8 +78,7 @@ Tooltip.prototype = {
 				self.animate('show');
 			},
 			'mouseleave':function(){
-				(self.o.referenceData === 'title')
-					? self.setTitle('unRemove') : null;
+				self.setTitle('unRemove');
 				self.animate('hide');
 				//create element not remove
 			}
@@ -90,26 +88,29 @@ Tooltip.prototype = {
 
 	/**
 	 * setTitle
-	 * hoverしている間は$elementからtitle属性を削除し、ブラウザ標準のツールチップを表示させない
+	 * hoverしている間は$elementからtitle属性を削除し、ブラウザ標準のツールチップを表示させない。
+	 * mouse outしたらtitleを付与し直す
 	 */
 	setTitle: function (titleState) {
 		var self = this;
-		switch (titleState){
-			//title属性を削除
-			case 'remove':
-				self.$element.attr('title', '')
-				break
-			//title属性を戻す
-			case 'unRemove':
-				self.$element.attr('title', self.contents)
-				break
+		if (self.o.referenceData === 'title') {
+			switch (titleState){
+				//title属性を削除
+				case 'remove':
+					self.$element.attr('title', '')
+					break
+				//title属性を戻す
+				case 'unRemove':
+					self.$element.attr('title', self.contents)
+					break
+			}
 		}
 	}
 	,
 
 	/**
 	 * createElement
-	 * body直下にtooltipを作成
+	 * body直下にtooltipを作成。作成後は再作成せず処理を抜ける
 	 */
 	createElement: function () {
 		var self = this;
@@ -135,10 +136,9 @@ Tooltip.prototype = {
 
 	/**
 	 * setContents
-	 * tooltip内に$elementのtitle要素をtextとしてset
+	 * tooltip内にcontentsを生成する
 	 */
 	setContents: function () {
-		var self = this;
 		switch (self.o.referenceData) {
 			case 'title':
 				self.$tooltip.empty();
@@ -160,7 +160,7 @@ Tooltip.prototype = {
 
 	/**
 	 * setPos
-	 * 方角に応じたtooltip表示positionをset
+	 * 方角に応じたpositionをcssにset
 	 */
 	setPos: function () {
 		var self = this
@@ -194,7 +194,7 @@ Tooltip.prototype = {
 
 	/**
 	 * animate
-	 * fadeアニメーション
+	 * fadeアニメーションで表示・非表示を切り替える
 	 * @param {string} display - 'show'の時は表示, 'hide'の時は非表示にする
 	 */
 	animate: function (display) {
