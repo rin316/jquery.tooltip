@@ -19,10 +19,11 @@ var Tooltip
  */
 DEFAULT_OPTIONS = {
 	referenceData: 'title' //{string} (title | selector) - data参照元
-,   tooltipClass: 'mod-tooltip' //{string}
-,   speed: 200 //{number} (0 | 200) - animation speed
-,   direction: 'n' //{string} (n | s | w | e) - ツールチップを表示する東西南北の方角
-,   fixedArrowPos: 10 //{number} (10 | 100)px - tooltipの周りに付く矢印の高さ
+,   tooltipClass: 'mod-tooltip' //{string} (mod-tooltip) - 作成されるtooltipに付与するclass name
+,   hideReferenceData: false //{boolean} (true | false) - true: tooltip作成の参照元になるreferenceData要素を隠す 'title'の時は何もしない
+,   speed: 200 //{number} (0 | 200)milli sec - animation speed
+,   direction: 'n' //{string} (n | s | w | e) - tooltipを表示する東西南北の方角
+,   fixPos: 10 //{number} (10 | 100)px - tooltipの周りに付く矢印の高さ
 };
 
 /**
@@ -63,7 +64,9 @@ Tooltip.prototype = {
 	 */
 	init: function () {
 		var self = this;
-
+		(self.o.hideReferenceData && self.o.referenceData !== 'title')
+			? self.contents.hide()
+			: null;
 		//mouseenter, mouseleave Event
 		self.$element.on({
 			'mouseenter':function(){
@@ -150,7 +153,7 @@ Tooltip.prototype = {
 				self.$tooltip.empty();
 				self.$tooltip
 					.append('<div class="' + self.o.tooltipClass + '-contents"></div>')
-					.children().append(self.contents.clone())
+					.children().append(self.contents.clone().show())
 				;
 				break;
 		}
@@ -168,22 +171,22 @@ Tooltip.prototype = {
 		switch (self.o.direction) {
 			//south
 			case 's':
-				prop.top = self.elmTop + self.elmH + self.o.fixedArrowPos;
+				prop.top = self.elmTop + self.elmH + self.o.fixPos;
 				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
 				break;
 			//TODO 未実装 West
 			case 'w':
-				prop.top = self.elmTop + self.elmH + self.o.fixedArrowPos;
+				prop.top = self.elmTop + self.elmH + self.o.fixPos;
 				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
 				break;
 			//TODO 未実装 East
 			case 'e':
-				prop.top = self.elmTop + self.elmH + self.o.fixedArrowPos;
+				prop.top = self.elmTop + self.elmH + self.o.fixPos;
 				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
 				break;
 			//default North
 			default:
-				prop.top = self.elmTop - self.tooltipH - self.o.fixedArrowPos;
+				prop.top = self.elmTop - self.tooltipH - self.o.fixPos;
 				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
 				break;
 		}
