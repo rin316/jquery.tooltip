@@ -113,7 +113,7 @@ Tooltip.prototype = {
 
 	/**
 	 * createElement
-	 * body直下にtooltipを作成。作成後は再作成せず処理を抜ける
+	 * body直下にtooltipを作成。もし作成後であれば再作成せず処理を抜ける
 	 */
 	createElement: function () {
 		var self = this;
