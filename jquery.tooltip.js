@@ -38,9 +38,18 @@ Tooltip = function ($element, options) {
 	self.elmTop = self.$element.offset().top;
 	self.elmW = self.$element.outerWidth();
 	self.elmH = self.$element.outerHeight();
-	self.contents = (self.o.referenceData === 'title')
-		? self.$element.attr('title')
-		: self.$element.find( $(self.o.referenceData) );
+	self.contents = (function () {
+		var $contents;
+		if (self.o.referenceData === 'title') {
+			return self.$element.attr('title');
+		} else {
+			$contents = self.$element.find( $(self.o.referenceData));
+			return ($contents.size())
+				? $contents
+				: $(self.o.referenceData);
+		}
+	})();
+
 	self.init();
 };
 
