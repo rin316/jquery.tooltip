@@ -139,6 +139,7 @@ Tooltip.prototype = {
 	 * tooltip内にcontentsを生成する
 	 */
 	setContents: function () {
+		var self = this;
 		switch (self.o.referenceData) {
 			case 'title':
 				self.$tooltip.empty();
@@ -153,8 +154,6 @@ Tooltip.prototype = {
 				;
 				break;
 		}
-
-
 	}
 	,
 
