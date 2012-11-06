@@ -50,8 +50,9 @@ hr {
 		line-height: 50px;
 	}
 
-/*--.tooltipArea--*/
-.tooltipArea p {
+/*--.tooltipContainer--*/
+.tooltipContainer div {
+	margin: 10px;
 	padding: 10px;
 	background-color: #D264B7;
 }

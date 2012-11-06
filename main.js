@@ -5,11 +5,17 @@
  
 (function ($, window, undefined) {
 	$(document).ready(function(){
-		$('#sample1-1 > p').tooltip();
+		$('#sample1-1 > div').tooltip();
 	});
 
 	$(document).ready(function(){
-		$('#sample2-1 > p').tooltip({
+		$('#sample1-2 > div').tooltip({
+			referenceData: '.tooltipArea'
+		});
+	});
+
+	$(document).ready(function(){
+		$('#sample2-1 > div').tooltip({
 			    tooltipClass: 'mod-tooltip'
 			,   speed: 500 //{number} - animation speed
 			,   direction: 's' //{string} - 'n,s,w,e' ツールチップを表示する東西南北の方角

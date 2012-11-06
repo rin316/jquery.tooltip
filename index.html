@@ -38,28 +38,25 @@
 	<hr>
 
 	<div class="container">
-		<h2>data set to html</h2>
-<pre>
-&lt;p data-title="タイトル1" data-price="1000yen"&gt;テキスト&lt;/p&gt;
-&lt;p data-title="タイトル2" data-price="2000yen"&gt;テキスト&lt;/p&gt;
-</pre>
-	</div>
-
-	<hr>
-
-	<div class="container">
-		<h2>Basic setting</h2>
+		<h2>Basic setting titleを利用</h2>
 		<div class="row">
-			<div class="span4 tooltipArea" id="sample1-1">
-				<p data-title="タイトル1" data-price="1000yen">テキスト</p>
-				<p data-title="タイトル2" data-price="2000yen">テキスト テキスト テキスト テキスト テキスト テキスト</p>
-				<p data-title="タイトル3 タイトル3 タイトル3 タイトル3 タイトル3 タイトル3"  data-price="3000yen">テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト</p>
+			<div class="span4 tooltipContainer" id="sample1-1">
+				<div title="タイトル1 1000yen">テキスト</div>
+				<div title="タイトル2 2000yen">テキスト</div>
+				<div title="タイトル3 3000yen">テキスト</div>
 			</div>
 			<div class="span8">
 <pre>
 $(document).ready(function(){
 	$('#sample1-1 > p').tooltip();
 });
+</pre>
+<pre>
+&lt;div class="span4 tooltipContainer" id="sample1-1"&gt;
+	&lt;div title="タイトル1 1000yen"&gt;テキスト&lt;/div&gt;
+	&lt;div title="タイトル2 2000yen"&gt;テキスト&lt;/div&gt;
+	&lt;div title="タイトル3 3000yen"&gt;テキスト&lt;/div&gt;
+&lt;/div>
 </pre>
 			</div>
 		</div>
@@ -68,12 +65,67 @@ $(document).ready(function(){
 	<hr>
 
 	<div class="container">
+		<h2>selectorを利用</h2>
+		<div class="row">
+			<div class="span4 tooltipContainer" id="sample1-2">
+				<div>
+					テキスト1
+					<div class="tooltipArea">
+						<p class="title">タイトル1</p>
+						<p class="price">価格</p>
+					</div>
+				</div>
+
+				<div>
+					テキスト2
+					<div class="tooltipArea">
+						<p class="title">タイトル2 タイトル2 タイトル2 タイトル2 タイトル2 タイトル2</p>
+						<p class="price">価格 価格</p>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="span8">
+<pre>
+$(document).ready(function(){
+	$('#sample1-2 > div').tooltip({
+		referenceData: '.tooltipArea'
+	});
+});
+</pre>
+<pre>
+&lt;div id="sample1-2"&gt;
+	&lt;div&gt;
+		テキスト1
+		&lt;div class="tooltipArea"&gt;
+			&lt;p class="title"&gt;タイトル1&lt;/p&gt;
+			&lt;p class="price"&gt;価格&lt;/p&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	&lt;div&gt;
+		テキスト2
+		&lt;div class="tooltipArea"&gt;
+			&lt;p class="title"&gt;タイトル2 タイトル2 タイトル2 タイトル2 タイトル2 タイトル2&lt;/p&gt;
+			&lt;p class="price"&gt;価格 価格&lt;/p&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="container">
 		<h2>表示する方角の指定: direction</h2>
 		<div class="row">
-			<div class="span4 tooltipArea" id="sample2-1">
-				<p data-title="タイトル1" data-price="1000yen">テキスト</p>
-				<p data-title="タイトル2" data-price="2000yen">テキスト テキスト テキスト テキスト テキスト テキスト</p>
-				<p data-title="タイトル3 タイトル3 タイトル3 タイトル3 タイトル3 タイトル3"  data-price="3000yen">テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト テキスト</p>
+			<div class="span4 tooltipContainer" id="sample2-1">
+				<div title="タイトル1 1000yen">テキスト</div>
+				<div title="タイトル2 2000yen">テキスト</div>
+				<div title="タイトル3 3000yen">テキスト</div>
 			</div>
 			<div class="span8">
 				<pre>

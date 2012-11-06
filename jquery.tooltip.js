@@ -4,7 +4,7 @@
  * @varsion   1.0
  * @require   jquery.js
  * @create    2012-10-30
- * @modify    2012-10-31
+ * @modify    2012-11-06
  * @author    rin316 [Yuta Hayashi]
  * @link      https://github.com/rin316/jquery.tooltip/
  */
@@ -18,10 +18,11 @@ var Tooltip
  * DEFAULT_OPTIONS
  */
 DEFAULT_OPTIONS = {
-    tooltipClass: 'mod-tooltip'
-,   speed: 200 //{number} - animation speed
-,   direction: 'n' //{string} - 'n,s,w,e' ツールチップを表示する東西南北の方角
-,   fixedArrowPos: 10 //{number} - tooltipの周りに付く矢印の高さ
+	referenceData: 'title' //{string} (title | selector) - data参照元
+,   tooltipClass: 'mod-tooltip' //{string}
+,   speed: 200 //{number} (0 | 200) - animation speed
+,   direction: 'n' //{string} (n | s | w | e) - ツールチップを表示する東西南北の方角
+,   fixedArrowPos: 10 //{number} (10 | 100)px - tooltipの周りに付く矢印の高さ
 };
 
 /**
@@ -37,8 +38,9 @@ Tooltip = function ($element, options) {
 	self.elmTop = self.$element.offset().top;
 	self.elmW = self.$element.outerWidth();
 	self.elmH = self.$element.outerHeight();
-	self.dataObj = self.$element.data();
-
+	self.contents = (self.o.referenceData === 'title')
+		? self.$element.attr('title')
+		: self.$element.find( $(self.o.referenceData) );
 	self.init();
 };
 
@@ -56,26 +58,51 @@ Tooltip.prototype = {
 		//mouseenter, mouseleave Event
 		self.$element.on({
 			'mouseenter':function(){
-				self.makeElement();
+				self.createElement();
 				self.setClass();
+				(self.o.referenceData === 'title')
+					? self.setTitle('remove') : null;
 				self.setContents();
+				//contents生成後にtooltipのsizeを取得
 				self.tooltipW = self.$tooltip.outerWidth();
 				self.tooltipH = self.$tooltip.outerHeight();
 				self.setPos();
 				self.animate('show');
 			},
 			'mouseleave':function(){
+				(self.o.referenceData === 'title')
+					? self.setTitle('unRemove') : null;
 				self.animate('hide');
+				//create element not remove
 			}
 		});
 	}
 	,
 
 	/**
-	 * makeElement
+	 * setTitle
+	 * hoverしている間は$elementからtitle属性を削除し、ブラウザ標準のツールチップを表示させない
+	 */
+	setTitle: function (titleState) {
+		var self = this;
+		switch (titleState){
+			//title属性を削除
+			case 'remove':
+				self.$element.attr('title', '')
+				break
+			//title属性を戻す
+			case 'unRemove':
+				self.$element.attr('title', self.contents)
+				break
+		}
+	}
+	,
+
+	/**
+	 * createElement
 	 * body直下にtooltipを作成
 	 */
-	makeElement: function () {
+	createElement: function () {
 		var self = this;
 		if(! self.$tooltip) {
 			self.$tooltip = $('<div class="' + self.o.tooltipClass + '">tooltip</div>')
@@ -92,7 +119,6 @@ Tooltip.prototype = {
 	 */
 	setClass: function () {
 		var self = this;
-
 		self.$tooltip.removeClass('n s w e');
 		self.$tooltip.addClass(self.o.direction);
 	}
@@ -100,49 +126,59 @@ Tooltip.prototype = {
 
 	/**
 	 * setContents
-	 * tooltip内にhtmlのdata属性をset
-	 * data属性のkeyをclassに、valueをテキストとしてset
+	 * tooltip内に$elementのtitle要素をtextとしてset
 	 */
 	setContents: function () {
 		var self = this;
+		switch (self.o.referenceData) {
+			case 'title':
+				self.$tooltip.empty();
+				self.$tooltip
+					.append('<div class="' + self.o.tooltipClass + '-contents">' + self.contents + '</div>');
+				break;
+			default:
+				self.$tooltip.empty();
+				self.$tooltip
+					.append('<div class="' + self.o.tooltipClass + '-contents"></div>')
+					.children().append(self.contents.clone())
+				;
+				break;
+		}
 
-		self.$tooltip.empty();
-		$.each(self.dataObj, function(prop, value){
-			//自分自身を除外
-			if (this !== self){
-				self.$tooltip.append('<div class="' + prop + '">' + value + '</div>');
-			}
-		});
+
 	}
 	,
 
 	/**
 	 * setPos
-	 * 方角に応じたclassをset
+	 * 方角に応じたtooltip表示positionをset
 	 */
 	setPos: function () {
 		var self = this
 			,   prop = {}
 			;
-
-		//if south
-		if (self.o.direction === 's'){
-			prop.top = self.elmTop + self.elmH + self.o.fixedArrowPos;
-			prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
-			//TODO 未実装 if West
-		} else if (self.o.direction === 'w'){
-			prop.top = self.elmTop + self.elmH;
-			prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
-			//TODO 未実装 if East
-		} else if (self.o.direction === 'e'){
-			prop.top = self.elmTop + self.elmH;
-			prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
+		switch (self.o.direction) {
+			//south
+			case 's':
+				prop.top = self.elmTop + self.elmH + self.o.fixedArrowPos;
+				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
+				break;
+			//TODO 未実装 West
+			case 'w':
+				prop.top = self.elmTop + self.elmH + self.o.fixedArrowPos;
+				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
+				break;
+			//TODO 未実装 East
+			case 'e':
+				prop.top = self.elmTop + self.elmH + self.o.fixedArrowPos;
+				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
+				break;
 			//default North
-		} else {
-			prop.top = self.elmTop - self.tooltipH - self.o.fixedArrowPos;
-			prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
+			default:
+				prop.top = self.elmTop - self.tooltipH - self.o.fixedArrowPos;
+				prop.left = self.elmLeft + (self.elmW / 2) - (self.tooltipW / 2);
+				break;
 		}
-
 		self.$tooltip.css(prop);
 	}
 	,
@@ -154,12 +190,15 @@ Tooltip.prototype = {
 	 */
 	animate: function (display) {
 		var self = this;
-		if (display === 'show'){
-			self.$tooltip.stop(true, true).fadeIn(self.o.speed);
-		} else if (display === 'hide'){
-			self.$tooltip.stop(true, true).fadeOut(self.o.speed);
+		switch (display) {
+			case 'show':
+				self.$tooltip.stop(true, true).fadeIn(self.o.speed);
+				break;
+
+			case 'hide':
+				self.$tooltip.stop(true, true).fadeOut(self.o.speed);
+				break;
 		}
-		return self;
 	}
 	
 };//Tooltip.prototype
