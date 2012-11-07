@@ -55,6 +55,7 @@ hr {
 	margin: 10px;
 	padding: 10px;
 	background-color: #D264B7;
+	zoom: 1;
 }
 
 .title { color: rgb(255, 181, 181); }

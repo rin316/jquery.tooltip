@@ -8,6 +8,10 @@
 	color: #FFF;
 	z-index: 10;
 }
+* html .ui-tooltip {
+	background-color: #000;
+}
+
 
 .ui-tooltip.ui-tooltip-direction-n:before,
 .ui-tooltip.ui-tooltip-direction-s:before,
