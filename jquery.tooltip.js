@@ -49,17 +49,17 @@ Tooltip = function ($element, options) {
 	})();
 
 	self.init();
-};
+};//Tooltip
 
 
 /**
  * Tooltip.prototype
  */
-Tooltip.prototype = {
+(function (fn) {
 	/**
 	 * init
 	 */
-	init: function () {
+	fn.init = function () {
 		var self = this;
 		(self.o.hideReferenceData && self.o.referenceData !== 'title')
 			? self.contents.hide()
@@ -81,15 +81,14 @@ Tooltip.prototype = {
 				//create element not remove
 			}
 		});
-	}
-	,
+	};
 
 	/**
 	 * setTitle
 	 * hoverしている間は$elementからtitle属性を削除し、ブラウザ標準のツールチップを表示させない。
 	 * mouse outしたらtitleを付与し直す
 	 */
-	setTitle: function (titleState) {
+	fn.setTitle = function (titleState) {
 		var self = this;
 		if (self.o.referenceData === 'title') {
 			switch (titleState){
@@ -103,14 +102,13 @@ Tooltip.prototype = {
 					break
 			}
 		}
-	}
-	,
+	};
 
 	/**
 	 * createElement
 	 * body直下にtooltipを作成。もし作成後であれば再作成せず処理を抜ける
 	 */
-	createElement: function () {
+	fn.createElement = function () {
 		var self = this;
 		if(! self.$tooltip) {
 			self.$tooltip = $('<div class="' + self.o.tooltipClass + '">tooltip</div>')
@@ -118,25 +116,23 @@ Tooltip.prototype = {
 				.hide()
 			;
 		}
-	}
-	,
+	};
 
 	/**
 	 * setClass
 	 * 方角に応じたclassをtooltipにset
 	 */
-	setClass: function () {
+	fn.setClass = function () {
 		var self = this;
 		self.$tooltip.removeClass('n s w e');
 		self.$tooltip.addClass(self.o.direction);
-	}
-	,
+	};
 
 	/**
 	 * setContents
 	 * tooltip内にcontentsを生成する
 	 */
-	setContents: function () {
+	fn.setContents = function () {
 		var self = this;
 		switch (self.o.referenceData) {
 			case 'title':
@@ -152,14 +148,13 @@ Tooltip.prototype = {
 				;
 				break;
 		}
-	}
-	,
+	};
 
 	/**
 	 * getPos
 	 * 各elementのsize,offsetを取得
 	 */
-	getPos: function () {
+	fn.getPos = function () {
 		var self = this;
 		self.elmLeft = self.$element.offset().left;
 		self.elmTop = self.$element.offset().top;
@@ -167,14 +162,13 @@ Tooltip.prototype = {
 		self.elmH = self.$element.outerHeight();
 		self.tooltipW = self.$tooltip.outerWidth();
 		self.tooltipH = self.$tooltip.outerHeight();
-	}
-	,
+	};
 
 	/**
 	 * setPos
 	 * 方角に応じたpositionをcssにset
 	 */
-	setPos: function () {
+	fn.setPos = function () {
 		var self = this
 			,   prop = {}
 			;
@@ -201,15 +195,14 @@ Tooltip.prototype = {
 				break;
 		}
 		self.$tooltip.css(prop);
-	}
-	,
+	};
 
 	/**
 	 * animate
 	 * fadeアニメーションで表示・非表示を切り替える
 	 * @param {string} display - 'show'の時は表示, 'hide'の時は非表示にする
 	 */
-	animate: function (display) {
+	fn.animate = function (display) {
 		var self = this;
 		switch (display) {
 			case 'show':
@@ -220,9 +213,8 @@ Tooltip.prototype = {
 				self.$tooltip.stop(true, true).fadeOut(self.o.speed);
 				break;
 		}
-	}
-	
-};//Tooltip.prototype
+	};
+})(Tooltip.prototype);//Tooltip.prototype
 
 
 /**
