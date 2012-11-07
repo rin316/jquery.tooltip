@@ -12,19 +12,19 @@
 'use strict'
 
 var Tooltip
-	, DEFAULT_OPTIONS
+	,DEFAULT_OPTIONS
 	;
 
 /**
  * DEFAULT_OPTIONS
  */
 DEFAULT_OPTIONS = {
-	referenceData: 'title' //{string} (title | selector) - data参照元
-,   tooltipClass: 'mod-tooltip' //{string} (mod-tooltip) - 作成されるtooltipに付与するclass name
-,   hideReferenceData: false //{boolean} (true | false) - true: tooltip作成の参照元になるreferenceData要素を隠す 'title'の時は何もしない
-,   speed: 200 //{number} (0 | 200)milli sec - animation speed
-,   direction: 'n' //{string} (n | s | w | e) - tooltipを表示する東西南北の方角
-,   fixPos: 10 //{number} (10 | 100)px - tooltipの周りに付く矢印の高さ
+	 referenceData: 'title' //{string} (title | selector) - data参照元
+	,tooltipClass: 'ui-tooltip' //{string} (ui-tooltip) - 作成されるtooltipに付与するclass name
+	,hideReferenceData: false //{boolean} (true | false) - true: tooltip作成の参照元になるreferenceData要素を隠す 'title'の時は何もしない
+	,speed: 200 //{number} (0 | 200)milli sec - animation speed
+	,direction: 'n' //{string} (n | s | w | e) - tooltipを表示する東西南北の方角
+	,fixPos: 10 //{number} (10 | 100)px - tooltipの周りに付く矢印の高さ
 };
 
 /**
@@ -36,14 +36,19 @@ Tooltip = function ($element, options) {
 	self.o = $.extend({}, DEFAULT_OPTIONS, options);
 
 	self.$element = $element;
+	//tooltip内に生成するcontents
 	self.contents = (function () {
 		var $contents;
-		if (self.o.referenceData === 'title') {
+		if (self.isTitle()) {
+			//referenceData が'title'であればtitle要素を返す
 			return self.$element.attr('title');
 		} else {
+			//referenceDataが'title'以外であれば、$element内からreferenceData要素を探す
 			$contents = self.$element.find( $(self.o.referenceData));
 			return ($contents.size())
+				//referenceData要素が見つかればそのまま返す。
 				? $contents
+				//見つからなければdocument全体からreferenceData要素を探す
 				: $(self.o.referenceData);
 		}
 	})();
@@ -61,7 +66,8 @@ Tooltip = function ($element, options) {
 	 */
 	fn.init = function () {
 		var self = this;
-		(self.o.hideReferenceData && self.o.referenceData !== 'title')
+		// (hideReferenceData:true && referenceData: 'title'以外) であれば、referenceData要素を隠す
+		(self.o.hideReferenceData && ! self.isTitle())
 			? self.contents.hide()
 			: null;
 		//mouseenter, mouseleave Event
@@ -84,13 +90,22 @@ Tooltip = function ($element, options) {
 	};
 
 	/**
+	 * isTitle
+	 * DEFAULT_OPTIONS の referenceData が'title'であればtrueを、それ以外であればfalseを返す
+	 */
+	fn.isTitle = function () {
+		var self = this;
+		return (self.o.referenceData === 'title') ? true : false;
+	};
+
+	/**
 	 * setTitle
 	 * hoverしている間は$elementからtitle属性を削除し、ブラウザ標準のツールチップを表示させない。
 	 * mouse outしたらtitleを付与し直す
 	 */
 	fn.setTitle = function (titleState) {
 		var self = this;
-		if (self.o.referenceData === 'title') {
+		if (self.isTitle()) {
 			switch (titleState){
 				//title属性を削除
 				case 'remove':
@@ -124,8 +139,12 @@ Tooltip = function ($element, options) {
 	 */
 	fn.setClass = function () {
 		var self = this;
-		self.$tooltip.removeClass('n s w e');
-		self.$tooltip.addClass(self.o.direction);
+		//class ui-tooltip-directoin-* を正規表現で削除
+		self.$tooltip.removeClass(function (index, css) {
+			var matchText = new RegExp(self.o.tooltipClass + "-direction-" + ".*");
+			return (css.match(matchText) || []).join(' ');
+		});
+		self.$tooltip.addClass(self.o.tooltipClass + '-direction-' + self.o.direction);
 	};
 
 	/**
@@ -134,19 +153,16 @@ Tooltip = function ($element, options) {
 	 */
 	fn.setContents = function () {
 		var self = this;
-		switch (self.o.referenceData) {
-			case 'title':
-				self.$tooltip.empty();
-				self.$tooltip
-					.append('<div class="' + self.o.tooltipClass + '-contents">' + self.contents + '</div>');
-				break;
-			default:
-				self.$tooltip.empty();
-				self.$tooltip
-					.append('<div class="' + self.o.tooltipClass + '-contents"></div>')
-					.children().append(self.contents.clone().show())
-				;
-				break;
+		if (self.isTitle()) {
+			self.$tooltip.empty();
+			self.$tooltip
+				.append('<div class="' + self.o.tooltipClass + '-contents">' + self.contents + '</div>');
+		} else {
+			self.$tooltip.empty();
+			self.$tooltip
+				.append('<div class="' + self.o.tooltipClass + '-contents"></div>')
+				.children().append(self.contents.clone().show())
+			;
 		}
 	};
 
