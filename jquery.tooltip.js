@@ -126,7 +126,11 @@ Tooltip = function ($element, options) {
 	fn.createElement = function () {
 		var self = this;
 		if(! self.$tooltip) {
-			self.$tooltip = $('<div class="' + self.o.tooltipClass + '">tooltip</div>')
+			self.$tooltip = $(
+				 '<div class="' + self.o.tooltipClass + '">'
+					+'<div class="' + self.o.tooltipClass + '-arrow"></div>'
+				+'</div>'
+			)
 				.appendTo($('body'))
 				.hide()
 			;
@@ -154,14 +158,17 @@ Tooltip = function ($element, options) {
 	fn.setContents = function () {
 		var self = this;
 		if (self.isTitle()) {
-			self.$tooltip.empty();
+			self.$tooltip.find('.' + self.o.tooltipClass + '-contents').remove();
+			//$tooltip内にtitleの入ったcontentsを生成
 			self.$tooltip
-				.append('<div class="' + self.o.tooltipClass + '-contents">' + self.contents + '</div>');
+				.prepend('<div class="' + self.o.tooltipClass + '-contents">' + self.contents + '</div>');
 		} else {
-			self.$tooltip.empty();
+			self.$tooltip.find('.' + self.o.tooltipClass + '-contents').remove();
+			//$tooltip内にreferenceData要素の入ったcontentsを生成
 			self.$tooltip
-				.append('<div class="' + self.o.tooltipClass + '-contents"></div>')
-				.children().append(self.contents.clone().show())
+				.prepend('<div class="' + self.o.tooltipClass + '-contents"></div>')
+				.children().eq(0)
+				.prepend(self.contents.clone().show())
 			;
 		}
 	};
