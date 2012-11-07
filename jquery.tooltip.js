@@ -9,6 +9,7 @@
  * @link      https://github.com/rin316/jquery.tooltip/
  */
 ;(function ($, window, undefined) {
+'use strict'
 
 var Tooltip
 	, DEFAULT_OPTIONS
@@ -35,10 +36,6 @@ Tooltip = function ($element, options) {
 	self.o = $.extend({}, DEFAULT_OPTIONS, options);
 
 	self.$element = $element;
-	self.elmLeft = self.$element.offset().left;
-	self.elmTop = self.$element.offset().top;
-	self.elmW = self.$element.outerWidth();
-	self.elmH = self.$element.outerHeight();
 	self.contents = (function () {
 		var $contents;
 		if (self.o.referenceData === 'title') {
@@ -74,9 +71,7 @@ Tooltip.prototype = {
 				self.setClass();
 				self.setTitle('remove');
 				self.setContents();
-				//contents生成後にtooltipのsizeを取得
-				self.tooltipW = self.$tooltip.outerWidth();
-				self.tooltipH = self.$tooltip.outerHeight();
+				self.getPos();
 				self.setPos();
 				self.animate('show');
 			},
@@ -157,6 +152,21 @@ Tooltip.prototype = {
 				;
 				break;
 		}
+	}
+	,
+
+	/**
+	 * getPos
+	 * 各elementのsize,offsetを取得
+	 */
+	getPos: function () {
+		var self = this;
+		self.elmLeft = self.$element.offset().left;
+		self.elmTop = self.$element.offset().top;
+		self.elmW = self.$element.outerWidth();
+		self.elmH = self.$element.outerHeight();
+		self.tooltipW = self.$tooltip.outerWidth();
+		self.tooltipH = self.$tooltip.outerHeight();
 	}
 	,
 
